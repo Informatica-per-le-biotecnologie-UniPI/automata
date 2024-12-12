@@ -22,6 +22,9 @@ class Symbol:
     def __init__(self, symbol):
         self.symbol = symbol
 
+    def __eq__(self, other):
+        return isinstance(other, Symbol) and self.symbol == other.symbol
+
     def __hash__(self):
         return hash(self.symbol)
 
@@ -104,3 +107,50 @@ class Automaton:
         self.final_states.add(state)
 
         return self
+
+    def __contains__(self, item: State | Transaction) -> bool:
+        if isinstance(item, State):
+            return item in self.states
+        elif isinstance(item, Transaction):
+            return item in self.transactions
+        else:
+            return False
+
+    # domanda: la dunder __call__ a cosa serve?
+    def __call__(self, string: list[Symbol]) -> bool:
+        """L'automa riconosce la `string` data?
+
+        :param string: La stringa da riconoscere.
+        :return: True se riconosciuta, False altrimenti.
+        """
+        return self._simulate(string, state=self.start_state)
+
+    def _simulate(self, string: list[Symbol], state: State) -> bool:
+        """Simula il riconoscimento di `string` partendo dallo stato `state` dato.
+
+        :param string: La stringa da riconoscere.
+        :param state: Lo stato iniziale. Si assume sia nell'insieme degli stati dell'automa
+        :return: True se riconosciuta, False altrimenti.
+        """
+        # ho terminato tutta la stringa...
+        if len(string) == 0:
+            # ... accetto se sono in uno stato finale
+            return state in self.final_states
+
+        next_state = list()
+        for transaction in self.transactions:
+            if transaction.source == state:
+                if transaction.symbol == string[0]:
+                    next_state.append(transaction.destination)
+
+        next_state = [
+            transaction.destination
+            for transaction in self.transactions
+            if transaction.source == state and transaction.symbol == string[0]
+        ]
+
+        # stringa non riconosciuta!
+        if len(next_state) == 0:
+            return False
+
+        return self._simulate(string[1:], next_state[0])
