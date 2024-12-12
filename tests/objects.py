@@ -72,3 +72,45 @@ try:
 except ValueError as e:
     print(e)
 
+##########################################
+# Simulation##############################
+##########################################
+a = Automaton(
+    start_state=s1,
+    final_states={s1},
+    transactions=set(transactions)
+)
+
+accepted_strings = [
+    [],
+    [Symbol("1")],
+    [Symbol("1"), Symbol("1")],
+    [Symbol("1"), Symbol("1"), Symbol("1")],
+    [Symbol("1"), Symbol("1"), Symbol("1"), Symbol("1")],
+    [Symbol("0"), Symbol("0")],
+    [Symbol("0"), Symbol("0"), Symbol("0"), Symbol("0")],
+    [Symbol("0"), Symbol("0"), Symbol("0"), Symbol("0"), Symbol("0"), Symbol("0")],
+    [Symbol("0"), Symbol("1"), Symbol("0")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("0")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("0")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("0")],
+]
+rejected_strings = [
+    [Symbol("0")],
+    [Symbol("0"), Symbol("1")],
+    [Symbol("0"), Symbol("1"), Symbol("1")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("1")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("0"), Symbol("0")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("0"), Symbol("0"), Symbol("1")],
+    [Symbol("0"), Symbol("1"), Symbol("1"), Symbol("1"), Symbol("0"), Symbol("0"), Symbol("1"), Symbol("1")],
+]
+
+print("Accepts:")
+for i, string in enumerate(accepted_strings[1:]):
+    print(i)
+    assert a(string)
+
+print("Rejects:")
+for string in rejected_strings:
+    assert (not a(string))
