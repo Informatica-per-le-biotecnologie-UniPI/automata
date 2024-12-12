@@ -9,11 +9,11 @@ transactions = [
     Transaction(s2, Symbol("1"), s2),
 ]
 
-# print(f"States: {s1, s2}")
-#
-# print(f"Transactions")
-# for t in transactions:
-#     print(t)
+print(f"States: {s1, s2}")
+
+print(f"Transactions")
+for t in transactions:
+    print(t)
 
 
 ##############################################################################
@@ -34,3 +34,41 @@ for s in a.final_states:
 
 for t in a.transactions:
     print(t)
+
+# testing adding more final states
+for s in a.final_states:
+    print(f"Final state: {s}")
+a.mark_as_final(s2)
+
+s3 = State("3")
+try:
+    a.mark_as_final(s3)
+except ValueError as e:
+    print(f"Errore nell'aggiunta dello stato finale: {e}")
+
+for s in a.final_states:
+    print(f"Final state: {s}")
+
+# testing adding transitions
+s3 = State("3")
+a.add(Transaction(s1, Symbol("2"), s3))
+a.add(Transaction(s3, Symbol("2"), s1))
+a.mark_as_final(s3)
+
+for s in a.final_states:
+    print(f"Final state: {s}")
+
+for t in a.transactions:
+    print(t)
+
+for s in a.final_states:
+    print(f"Final state: {s}")
+a.mark_as_final(s2)
+
+# should fail
+s4 = State("4")
+try:
+    a.add(Transaction(s4, Symbol("2"), s1))
+except ValueError as e:
+    print(e)
+
